@@ -27,12 +27,14 @@ module ArangoDB
     class ResponseError < Error
       attr_reader :response
       def initialize(response, orig = $!)
-        super(response.body, orig)
+        msg = {:status => response.status, :headers => response.response_headers, :body => response.body}
+        super(msg, orig)
         @response = response
       end
     end
 
     class ResourceNotFound < ResponseError; end
+    class DuplicateResourceName < ResponseError; end
 
   end
 end
@@ -45,3 +47,6 @@ require 'arangodb/middleware/custom_error'
 
 # Require ArangoDB files
 %w( client resource document_handle ).each { |file| require "arangodb/#{ file }" }
+
+# Require additional API files
+%w( database ).each { |file| require "arangodb/api/#{ file }" }

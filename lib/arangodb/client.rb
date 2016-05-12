@@ -59,9 +59,6 @@ module ArangoDB
         # Pack JSON requests
         faraday.request :json
 
-        # Raise errors appropriately
-        faraday.response :raise_error
-
         # Unpack JSON responses
         faraday.response :json, :content_type => /\bjson$/
 
