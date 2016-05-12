@@ -1,15 +1,17 @@
-# ArangoDB::Client
+# ArangoDB::API
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/arangodb/client`. To experiment with that code, run `bin/console` for an interactive prompt.
+The ArangoDB::API and ArangoDB::Client provide a simple wrapper around the ArangoDB HTTP REST API, allowing for relatively easy, programatic access to the API.
 
-TODO: Delete this and the text above, and describe your gem
+The API includes additional object-oriented helpers for common components, such as Databases and Graphs.
+
+The Client is built using the excellent Faraday library, and is extended with simple helpers to give it a more resource-oriented feel.
 
 ## Installation
 
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'arangodb-client'
+gem 'arangodb-api'
 ```
 
 And then execute:
@@ -18,7 +20,7 @@ And then execute:
 
 Or install it yourself as:
 
-    $ gem install arangodb-client
+    $ gem install arangodb-api
 
 ## Usage
 
