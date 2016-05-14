@@ -5,7 +5,7 @@ RSpec.describe ArangoDB::API::Collection do
   let(:collection_name) { "collection-#{ Faker::Color.color_name.gsub(/\s/, '-') }" }
   subject               { described_class.new(client, collection_name) }
 
-  fcontext 'with an existing collection' do
+  context 'with an existing collection' do
     before { subject.create unless subject.exists? }
     after  { subject.destroy if subject.exists? }
 
