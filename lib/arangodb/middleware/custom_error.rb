@@ -22,7 +22,7 @@ module ArangoDB
 
       def raise_409(env)
         case env[:body]['errorNum']
-        when 1207
+        when 1207, 1925
           raise ArangoDB::API::DuplicateResourceName, env
         else
           raise ArangoDB::API::ResponseError, env

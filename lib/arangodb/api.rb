@@ -49,4 +49,4 @@ require 'arangodb/middleware/custom_error'
 %w( client resource document_handle ).each { |file| require "arangodb/#{ file }" }
 
 # Require additional API files
-%w( database ).each { |file| require "arangodb/api/#{ file }" }
+%w( database graph ).each { |file| require "arangodb/api/#{ file }" }

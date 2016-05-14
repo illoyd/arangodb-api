@@ -1,32 +1,32 @@
 require 'spec_helper'
 
-RSpec.describe ArangoDB::API::Database do
+RSpec.describe ArangoDB::API::Graph do
   let(:client)        { ArangoDB::Client.new }
-  let(:database_name) { "#{ client.uri.database }-#{ Faker::Color.color_name.gsub(/\s/, '_') }" }
-  subject             { described_class.new(client, database_name) }
+  let(:graph_name)    { "#{ client.uri.database }-#{ Faker::Color.color_name.gsub(/\s/, '_') }" }
+  subject             { described_class.new(client, graph_name) }
 
-  context 'with an existing database' do
+  context 'with an existing graph' do
     before { subject.create unless subject.exists? }
     after  { subject.destroy if subject.exists? }
 
     describe '#exists?' do
-      it 'finds the database' do
+      it 'finds the graph' do
         expect( subject.exists? ).to be(true)
       end
     end
 
-    describe '#system?' do
-      it 'is not a system database' do
-        expect( subject.system? ).to eq(false)
-      end
-    end
-
     describe '#properties' do
-      it 'has a name property' do
-        expect( subject.properties['name'] ).to eq(database_name)
+      it 'has properties' do
+        expect( subject.properties ).to be_a(Hash)
       end
-      it 'has a isSystem property' do
-        expect( subject.properties['isSystem'] ).to eq(false)
+      it 'has a name property' do
+        expect( subject.properties['name'] ).to eq(graph_name)
+      end
+      it 'has a orphanCollections property' do
+        expect( subject.properties['orphanCollections'] ).to be_a(Array)
+      end
+      it 'has a edgeDefinitions property' do
+        expect( subject.properties['edgeDefinitions'] ).to be_a(Array)
       end
     end
 
@@ -41,7 +41,7 @@ RSpec.describe ArangoDB::API::Database do
         expect{ subject.destroy }.not_to raise_error
       end
 
-      it 'decrements the count of databases' do
+      it 'decrements the count of graphs' do
         expect{ subject.destroy }.to change{ subject.count }.by(-1)
       end
 
@@ -52,7 +52,7 @@ RSpec.describe ArangoDB::API::Database do
     end
   end
 
-  context 'with a new database' do
+  context 'with a new graph' do
     before { subject.destroy if subject.exists? }
     after  { subject.destroy if subject.exists? }
 
@@ -67,7 +67,7 @@ RSpec.describe ArangoDB::API::Database do
         expect{ subject.create }.not_to raise_error
       end
 
-      it 'increments the count of databases' do
+      it 'increments the count of graphs' do
         expect{ subject.create }.to change{ subject.count }.by(1)
       end
 

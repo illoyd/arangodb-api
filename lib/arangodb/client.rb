@@ -17,10 +17,15 @@ module ArangoDB
     end
 
     ##
-    # Short-hand for graph resource.
-    # Returns a Resource proxy for the Graph (confusingly called gharial) API endpoint.
+    # Build a new Database resource linked to this client.
+    def database(database_name = nil)
+      API::Database.new(self, database_name)
+    end
+
+    ##
+    # Build a new Graph resource linked to this client.
     def graph(graph_name = nil)
-      resource('_api/gharial', graph_name)
+      API::Graph.new(self, graph_name)
     end
 
     ##

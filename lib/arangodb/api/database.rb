@@ -1,60 +1,58 @@
 module ArangoDB
-  module OGM
-    module API
+  module API
 
-      ##
-      # A simple object model for intereacting with Database resources.
-      class Database
+    ##
+    # A simple object model for intereacting with Database resources.
+    class Database
 
-        attr_reader :client, :resource
+      Endpoint = '_api/database'.freeze
+      AbsoluteEndpoint = "/#{ Endpoint }".freeze
 
-        def initialize(client, database_name = nil)
-          @database_name = database_name
-          uri = "/_db/#{ database_name }" if database_name.present?
+      attr_reader :client, :resource
 
-          @client = client
-          @resource = client.resource(uri)
-        end
+      def initialize(client, database_name = nil)
+        @client   = client
+        @database_name = database_name
 
-        def properties
-          @properties ||= resource.current
-        end
+        # Save a path to the database by forcing it to the root of the URI
+        uri = "/_db/#{ database_name }" if database_name.present?
+        @resource = @client.resource(uri, Endpoint)
+      end
 
-        def database_name
-          @database_name || properties['name']
-        end
+      def properties
+        @properties ||= resource.resource('current').get.body['result']
+      end
 
-        def system?
-          !!properties['isSystem']
-        end
+      def database_name
+        @database_name || @client.uri.try(:database) || properties['name']
+      end
 
-        def exists?
-          client.resource('/_api/database').get.body['results'].include?(database_name)
-        end
+      def system?
+        !!properties['isSystem']
+      end
 
-        def create(options = {})
-        end
+      def exists?
+        self.list.include?(database_name)
+      end
 
-        def destroy
-          client.resource('/_api/database')
-        end
+      def create(options = {})
+        options['name'] = database_name
+        client.resource(AbsoluteEndpoint).post(options)
+      end
 
-        protected
+      def destroy
+        client.resource(AbsoluteEndpoint, database_name).delete
+      end
 
-        def system_database
-          client.resource('/')
-        end
+      def list
+        client.resource(AbsoluteEndpoint).get.body['result']
+      end
 
-        def api_resource
-          resource.resource('_api/database')
-        end
-
-        def instance_resource
-          api_resource.resource(database_name)
-        end
-
+      def count
+        list.count
       end
 
     end
+
   end
 end
