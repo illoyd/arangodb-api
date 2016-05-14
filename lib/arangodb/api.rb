@@ -50,3 +50,6 @@ require 'arangodb/middleware/custom_error'
 
 # Require additional API files
 %w( database graph ).each { |file| require "arangodb/api/#{ file }" }
+
+# Require testing files
+%w( strategy ).each { |file| require "arangodb/test/#{ file }" }
