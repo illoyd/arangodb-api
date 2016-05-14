@@ -1,6 +1,4 @@
-DATABASE_CLASSES = %w( people )
-
-$strategy = ArangoDB::Test::Strategy.new(client: ArangoDB::Client.new)
+$strategy = ArangoDB::Test::Strategy.new(client: ArangoDB::Client.new, collections: %w(people))
 
 RSpec.configure do |config|
   config.before(:suite) { $strategy.before_suite }
