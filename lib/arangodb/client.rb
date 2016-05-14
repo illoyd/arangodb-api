@@ -55,6 +55,10 @@ module ArangoDB
       API::Graph.new(self, graph_name)
     end
 
+    def collection(collection_name)
+      API::Collection.new(self, collection_name)
+    end
+
     ##
     # Return the current URI or default URI.
     def uri
