@@ -3,10 +3,37 @@ module ArangoDB
   # HTTP REST client for the ArangoDB API.
   class Client
 
-    delegate *Faraday::Connection::METHODS, to: :connection
+    # delegate *Faraday::Connection::METHODS, to: :connection
 
     def initialize(uri = nil)
       self.uri = uri
+    end
+
+    %w[get head delete].each do |method|
+      class_eval <<-RUBY, __FILE__, __LINE__ + 1
+        def #{method}(url = nil, params = nil, headers = nil)
+          process_response(connection.#{method}(url, params, headers))
+        end
+      RUBY
+    end
+
+    %w[post put patch].each do |method|
+      class_eval <<-RUBY, __FILE__, __LINE__ + 1
+        def #{method}(url = nil, body = nil, headers = nil, &block)
+          process_response(connection.#{method}(url, body, headers, &block))
+        end
+      RUBY
+    end
+
+    def process_response(response)
+      case response
+      when API::ErrorResponse
+        API::ErrorResponse.new(response: response)
+      when API::CursorResponse
+        API::CursorResponse.new(client: self, response: response)
+      else
+        API::Response.new(response: response)
+      end
     end
 
     ##
