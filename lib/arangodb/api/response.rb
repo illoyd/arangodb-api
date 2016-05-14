@@ -82,7 +82,7 @@ module ArangoDB
       end
 
       def self.===(other)
-        (other.try(:body) || other).has_key?('result')
+        (other.try(:body) || other).try(:has_key?, 'result')
       end
 
     end
