@@ -7,16 +7,17 @@ module ArangoDB
 
       Endpoint = '_api/gharial'.freeze
 
-      attr_reader :client, :resource
+      attr_reader :client, :instance
+      delegate :resource, to: :instance
 
       def initialize(client, graph_name = nil)
         @client   = client
         @graph_name = graph_name
-        @resource = client.resource(Endpoint, graph_name)
+        @instance = client.resource(Endpoint, graph_name)
       end
 
       def properties
-        @properties ||= client.resource(Endpoint, graph_name).get.body['graph']
+        @properties ||= instance.get.body['graph']
       end
 
       def graph_name
@@ -39,7 +40,7 @@ module ArangoDB
       # Destroy the graph.
       # Calls DELETE _api/gharial/#{graph_name}
       def destroy
-        client.resource(Endpoint, graph_name).delete
+        instance.delete
       end
 
       def list
