@@ -46,6 +46,22 @@ module ArangoDB
       end
 
       def create_graph
+        if graph_definition.present?
+          documents = graph_definition['edgeDefinitions'].map { |d| d['from'] + d['to'] }.flatten.uniq
+          edges = graph_definition['edgeDefinitions'].map { |d| d['collection'] }.flatten.uniq
+          orphans = graph_definition.fetch('orphanCollections', [])
+
+          (documents + orphans).each do |collection|
+            cc = client.collection(collection)
+            cc.create unless cc.exists?
+          end
+
+          edges.each do |collection|
+            cc = client.collection(collection)
+            cc.create('type' => ArangoDB::API::Collection::Edge) unless cc.exists?
+          end
+        end
+
         graph.create(graph_definition) if graph_name && !graph.exists?
       end
 
