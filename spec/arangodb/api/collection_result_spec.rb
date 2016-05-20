@@ -8,10 +8,10 @@ def new_person(client)
   client.resource('_api/document', handle).get.body
 end
 
-RSpec.describe ArangoDB::API::CursorResponse do
+RSpec.describe ArangoDB::API::CollectionResult do
   let(:client)     { ArangoDB::Client.new }
   let(:batch_size) { 2 }
-  subject          { client.resource('_api/simple/all').put('collection' => 'people', 'batchSize' => batch_size) }
+  subject          { described_class.new(client.resource('_api/simple/all').put('collection' => 'people', 'batchSize' => batch_size).body, client: client) }
 
   context 'with 1 item' do
     let(:people) { 1.times.map { new_person(client) } }
@@ -31,10 +31,6 @@ RSpec.describe ArangoDB::API::CursorResponse do
 
     it '#to_a returns a single item' do
       expect( subject.to_a ).to match_array(people)
-    end
-
-    it 'returns results' do
-      expect( subject.result ).to match_array(people)
     end
   end
 
@@ -56,10 +52,6 @@ RSpec.describe ArangoDB::API::CursorResponse do
 
     it '#to_a returns a single item' do
       expect( subject.to_a ).to match_array(people)
-    end
-
-    it 'returns results' do
-      expect( subject.result ).to match_array(people)
     end
   end
 
@@ -83,10 +75,6 @@ RSpec.describe ArangoDB::API::CursorResponse do
     it '#to_a returns a single item' do
       expect( subject.to_a ).to match_array(people)
     end
-
-    it 'returns results' do
-      expect( subject.result ).to match_array(people)
-    end
   end
 
   context 'with 5 pages worth of items' do
@@ -108,10 +96,6 @@ RSpec.describe ArangoDB::API::CursorResponse do
 
     it '#to_a returns a single item' do
       expect( subject.to_a ).to match_array(people)
-    end
-
-    it 'returns results' do
-      expect( subject.result ).to match_array(people)
     end
   end
 
